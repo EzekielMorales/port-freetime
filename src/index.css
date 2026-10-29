@@ -1,0 +1,566 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ========================================================================= */
+/* MB SANS, MB MONO & LCD FONTS                                              */
+/* ========================================================================= */
+@font-face {
+  font-family: 'MB Sans';
+  src: url('/fonts/a-BwCKRlZ-.woff2') format('woff2');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'MB Sans';
+  src: url('/fonts/b-C3VRySno.woff2') format('woff2');
+  font-weight: 500;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'MB Mono';
+  src: url('/fonts/c-ClSDCIEF.woff2') format('woff2');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'MB Mono';
+  src: url('/fonts/d-CQR7nPae.woff2') format('woff2');
+  font-weight: 500;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'MB LCD';
+  src: url('/fonts/DS-Digital-dG6DdXEc.ttf') format('truetype');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* ========================================================================= */
+/* THEME VARIABLES (Exact from mikes.cv)                                     */
+/* ========================================================================= */
+:root {
+  --bg: var(--folio-bg);
+  --ink: #17160f;
+  --faint: #8c8b82;
+  --accent: #1e9e52;
+  --measure: 40rem;
+  --veil-light: #faf5f5;
+  --veil-dark: #191817;
+  --folio-bg: var(--veil-light);
+  --folio-sans: "MB Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  --folio-mono: "MB Mono", ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  --folio-blue: #3a53ed;
+  --path-blue-rgb: 44, 111, 255;
+  --path-blue: rgb(var(--path-blue-rgb));
+  --folio-mute: #9b9b9b;
+  --folio-ink: #060606;
+  --folio-body: #434445;
+  --folio-rule: #cbc9d6;
+  --surface-card: #fff;
+  --surface-sunken: #efeaea;
+  --surface-hover: rgba(23, 22, 15, .035);
+  --surface-chip: #f2f0f0;
+  --cs-ink: #111;
+  --ink-muted: rgba(17, 17, 17, .48);
+  --ink-title: #313030;
+  --ink-desc: #666;
+  --ink-gutter: #9a9a9a;
+  --ink-faint: #989898;
+  --ink-faint-hover: #6c6c6c;
+  --ink-hint: #757575;
+  --ink-link-hover: #5c5b5b;
+  --keyline: #fff;
+  --cs-card-line: rgba(17, 17, 17, .08);
+  --cs-screen-line: rgba(0, 0, 0, .08);
+  --tl-dot-line: #c3c1c1;
+  --tl-dot-fill: #b4b2b2;
+  --tl-dot-case: #a9a7ad;
+  --tl-route: #c2c0c0;
+  --shadow-rgb: 0, 0, 0;
+  --footer-tint-rgb: 255, 255, 255;
+  --folio-col-w: 560px;
+  --rail-x: -21.5px;
+  --ease-out: cubic-bezier(.23, 1, .32, 1);
+  --avatar-lift: -4px;
+  --avatar-dur: .32s;
+  --avatar-scale: 1.05;
+  --avatar-falloff: .45;
+  --avatar-ease-in: cubic-bezier(.22, 1, .36, 1);
+  --avatar-ease-out: cubic-bezier(.34, 3.85, .64, 1);
+  --tl-logo-size: 28px;
+}
+
+[data-theme="dark"] {
+  --folio-bg: var(--veil-dark);
+  --ink: #f2efe9;
+  --faint: #6e6d66;
+  --accent: #35c56d;
+  --folio-blue: #2C6FFF;
+  --folio-mute: #7d7c7c;
+  --folio-ink: #f5f3f0;
+  --folio-body: #b9b8b6;
+  --folio-rule: #39383f;
+  --surface-card: #242322;
+  --surface-sunken: #211f1f;
+  --surface-hover: rgba(255, 255, 255, .045);
+  --surface-chip: #2b2928;
+  --cs-ink: #f0eeeb;
+  --ink-muted: rgba(240, 238, 235, .48);
+  --ink-title: #e8e6e3;
+  --ink-desc: #a3a2a0;
+  --ink-gutter: #6f6e6e;
+  --ink-faint: #767575;
+  --ink-faint-hover: #9a9999;
+  --ink-hint: #8a8989;
+  --ink-link-hover: #d6d4d1;
+  --keyline: rgba(255, 255, 255, .14);
+  --cs-card-line: rgba(255, 255, 255, .1);
+  --cs-screen-line: rgba(255, 255, 255, .08);
+  --tl-dot-line: #4a4848;
+  --tl-dot-fill: #565454;
+  --tl-dot-case: #5a585e;
+  --tl-route: #5e5c5c;
+  --footer-tint-rgb: 25, 24, 23;
+}
+
+@layer base {
+  body {
+    background-color: var(--folio-bg);
+    color: var(--ink);
+    font-family: var(--folio-sans);
+    user-select: none;
+    -webkit-user-select: none;
+    transition: background-color 0.5s ease-out, color 0.5s ease-out;
+  }
+}
+
+/* ========================================================================= */
+/* PAGE 2 FOLIO STYLES                                                       */
+/* ========================================================================= */
+.folio {
+  font-family: var(--folio-sans);
+  background: var(--folio-bg);
+  min-height: 100vh;
+  min-height: 100svh;
+  display: flex;
+  flex-direction: column;
+  color: var(--ink);
+  transition: background-color 0.5s ease-out, color 0.5s ease-out;
+}
+
+/* Top Sticky Coordinates */
+.folio-sticky {
+  position: fixed;
+  top: 72px;
+  left: clamp(24px, calc((100vw - var(--folio-col-w)) / 2 - 306px), 72px);
+  z-index: 3;
+  display: flex;
+  align-items: center;
+  gap: 22px;
+  pointer-events: none;
+}
+
+.fs-rail {
+  align-self: stretch;
+  width: 8px;
+  flex-shrink: 0;
+  background-image: radial-gradient(circle at .8px .8px, var(--folio-rule) .8px, transparent .9px);
+  background-size: 3.2px 3.6px;
+  opacity: 0.6;
+}
+
+.fs-lines {
+  padding: 12px 0;
+  font-family: var(--folio-mono);
+  font-weight: 500;
+  font-size: 12px;
+  line-height: 1.8;
+  letter-spacing: 1.84px;
+  text-transform: uppercase;
+  color: var(--folio-mute);
+  white-space: nowrap;
+}
+
+.fs-name {
+  color: var(--folio-ink);
+}
+
+/* Main Folio Column */
+.folio-col {
+  width: min(100% - 3rem, var(--folio-col-w));
+  margin: 0 auto;
+  padding: 80px 0 168px;
+  flex: 1 0 auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 48px;
+}
+
+.folio-window {
+  position: relative;
+}
+
+.folio-intro {
+  width: 100%;
+  max-width: 460px;
+  margin-top: -28px;
+  text-align: center;
+}
+
+.folio-tagline {
+  font-weight: 500;
+  font-size: 16px;
+  line-height: 1.8;
+  letter-spacing: -.12px;
+  color: var(--folio-ink);
+}
+
+.folio-sub {
+  font-weight: 400;
+  font-size: 16px;
+  line-height: 1.6;
+  letter-spacing: -.12px;
+  color: var(--folio-body);
+  opacity: .8;
+}
+
+/* Track & Timeline */
+.folio-track {
+  position: relative;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 36px;
+}
+
+.plan-head {
+  position: absolute;
+  left: -3px;
+  top: -106px;
+  width: 48px;
+  text-align: center;
+  color: var(--folio-blue);
+}
+
+.plan-label {
+  display: block;
+  font-family: var(--folio-mono);
+  font-weight: 500;
+  font-size: 6px;
+  line-height: 6px;
+  letter-spacing: .76px;
+  text-transform: uppercase;
+}
+
+.plan-plane {
+  display: block;
+  width: 16px;
+  height: 15px;
+  margin: 10px auto 0;
+}
+
+/* Flight Path Curve & Dashed Line */
+.folio-path {
+  position: absolute;
+  left: calc(var(--rail-x) - .5px);
+  top: -65px;
+  bottom: 24px;
+  width: 1px;
+}
+
+.path-curve {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 44px;
+  height: 110px;
+  overflow: visible;
+}
+
+.pc-dots {
+  stroke: var(--folio-rule);
+  stroke-width: 1;
+  stroke-dasharray: 2 3.5;
+  stroke-linecap: round;
+}
+
+.path-rail {
+  position: absolute;
+  left: 0;
+  top: 110px;
+  bottom: 0;
+  width: 1px;
+  background-image: linear-gradient(to bottom, var(--folio-rule) 0 2px, transparent 2px 5.5px);
+  background-size: 1px 5.5px;
+}
+
+/* Timeline Entries */
+.folio-timeline {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 40px;
+  position: relative;
+  z-index: 1;
+}
+
+.tl-entry {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.tl-logos {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 2px;
+}
+
+.tl-avatar {
+  position: relative;
+  width: var(--tl-logo-size);
+  height: var(--tl-logo-size);
+  border-radius: 50%;
+  overflow: hidden;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  transition: transform var(--avatar-dur) var(--ease-out);
+}
+
+.tl-avatar:hover {
+  transform: translateY(var(--avatar-lift)) scale(var(--avatar-scale));
+}
+
+.tl-logo {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  background: var(--surface-card);
+}
+
+.tl-logo img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.tl-head {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-family: var(--folio-sans);
+}
+
+.tl-year {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-family: var(--folio-mono);
+  font-size: 11px;
+  letter-spacing: 0.8px;
+  color: var(--folio-mute);
+  position: absolute;
+  left: -88px;
+  top: 2px;
+  width: 70px;
+  justify-content: flex-end;
+}
+
+.tl-route {
+  color: var(--tl-route);
+  font-size: 10px;
+}
+
+.tl-yearnum {
+  font-weight: 500;
+  color: var(--folio-mute);
+}
+
+.tl-dot {
+  position: absolute;
+  left: calc(var(--rail-x) - 4px);
+  top: 6px;
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  background: var(--surface-card);
+  border: 1.5px solid var(--tl-dot-line);
+}
+
+.tl-dot.now {
+  background: var(--folio-blue);
+  border-color: var(--surface-card);
+  box-shadow: 0 0 0 1.5px var(--folio-blue);
+}
+
+.tl-company {
+  font-weight: 500;
+  font-size: 16px;
+  color: var(--folio-ink);
+  text-decoration: none;
+}
+
+.tl-badge {
+  font-family: var(--folio-mono);
+  font-size: 9px;
+  letter-spacing: 0.8px;
+  text-transform: uppercase;
+  color: var(--folio-blue);
+  background: rgba(var(--path-blue-rgb), 0.1);
+  padding: 2px 7px;
+  border-radius: 999px;
+  font-weight: 500;
+}
+
+.tl-body {
+  padding-left: 0;
+}
+
+.tl-role {
+  font-weight: 500;
+  font-size: 14px;
+  color: var(--folio-ink);
+  margin-bottom: 4px;
+}
+
+.tl-desc {
+  font-size: 14px;
+  line-height: 1.6;
+  color: var(--folio-body);
+  opacity: 0.88;
+}
+
+/* Folio Footer */
+.folio-footer {
+  z-index: 5;
+  padding: 44px 0 32px;
+}
+
+.folio-footer-inner {
+  width: min(100% - 3rem, 560px);
+  margin: 0 auto;
+  display: flex;
+  justify-content: center;
+}
+
+.ff-links {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 17px;
+}
+
+.ff-link {
+  display: inline-flex;
+  align-items: center;
+  background: none;
+  border: none;
+  padding: 2px 10px;
+  border-radius: 999px;
+  cursor: pointer;
+  font-family: var(--folio-mono);
+  font-weight: 500;
+  font-size: 12px;
+  line-height: 1.8;
+  letter-spacing: 2.16px;
+  text-transform: uppercase;
+  color: var(--folio-mute);
+  text-decoration: none;
+  transition: color .16s var(--ease-out), background-color .16s var(--ease-out);
+}
+
+.ff-link:hover {
+  color: var(--ink-link-hover);
+  background: var(--surface-chip);
+}
+
+.ff-link-label {
+  display: inline-block;
+  transition: transform .16s var(--ease-out);
+}
+
+.ff-link:hover .ff-link-label {
+  transform: scale(1.05);
+}
+
+/* Machine & Ticket Styles */
+.font-matrix {
+  font-family: 'Share Tech Mono', 'VT323', monospace;
+  letter-spacing: 0.18em;
+}
+
+.font-ticket {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+}
+
+.machine-grain {
+  background-color: #ded8c6;
+  background-image: 
+    radial-gradient(rgba(0, 0, 0, 0.04) 1px, transparent 0),
+    radial-gradient(rgba(255, 255, 255, 0.25) 1px, transparent 0);
+  background-size: 8px 8px, 12px 12px;
+  background-position: 0 0, 4px 4px;
+}
+
+.ticket-grain {
+  background-color: #fcfbf9;
+  background-image: radial-gradient(rgba(0, 0, 0, 0.02) 1px, transparent 0);
+  background-size: 6px 6px;
+}
+
+@keyframes amberPulse {
+  0%, 100% {
+    filter: drop-shadow(0 0 4px rgba(251, 191, 36, 0.7)) drop-shadow(0 0 10px rgba(245, 158, 11, 0.4));
+  }
+  50% {
+    filter: drop-shadow(0 0 7px rgba(251, 191, 36, 0.9)) drop-shadow(0 0 16px rgba(245, 158, 11, 0.6));
+  }
+}
+
+@keyframes greenPulse {
+  0%, 100% {
+    filter: drop-shadow(0 0 6px rgba(52, 211, 153, 0.9)) drop-shadow(0 0 16px rgba(16, 185, 129, 0.7));
+  }
+  50% {
+    filter: drop-shadow(0 0 10px rgba(52, 211, 153, 1)) drop-shadow(0 0 24px rgba(16, 185, 129, 0.9));
+  }
+}
+
+.glow-amber {
+  animation: amberPulse 1.2s infinite ease-in-out;
+}
+
+.glow-green {
+  animation: greenPulse 0.8s infinite ease-in-out;
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(150, 150, 150, 0.3);
+  border-radius: 9999px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(150, 150, 150, 0.5);
+}
