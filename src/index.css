@@ -789,7 +789,7 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 24px;
+  gap: 16px;
   padding: 44px 0 16px;
   margin-top: 24px;
 }
@@ -798,7 +798,8 @@
   display: flex;
   flex-direction: column;
   gap: 6px;
-  max-width: 320px;
+  flex: 1 1 auto;
+  min-width: 0;
 }
 
 .outro-title {
@@ -808,6 +809,7 @@
   line-height: 1.35;
   color: var(--folio-ink);
   letter-spacing: -0.2px;
+  white-space: nowrap;
 }
 
 .outro-sub {
@@ -817,6 +819,7 @@
   line-height: 1.5;
   color: var(--folio-body);
   opacity: 0.82;
+  white-space: nowrap;
 }
 
 /* Memories Fan container */
@@ -913,6 +916,10 @@
     flex-direction: column;
     align-items: flex-start;
     gap: 32px;
+  }
+  .outro-title,
+  .outro-sub {
+    white-space: normal;
   }
   .outro-memories {
     align-self: center;
