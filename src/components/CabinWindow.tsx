@@ -1,5 +1,6 @@
 import React, { useRef, useEffect, useState, useCallback } from 'react';
 import { sound } from '../utils/audio';
+import { asset } from '../utils/assets';
 
 interface CabinWindowProps {
   isDarkMode: boolean;
@@ -258,7 +259,7 @@ export const CabinWindow: React.FC<CabinWindowProps> = ({
 
         {/* Real cloud.png puffs drifting smoothly across the window */}
         <img
-          src="/cloud.png"
+          src={asset('/cloud.png')}
           alt=""
           aria-hidden="true"
           draggable="false"
@@ -272,7 +273,7 @@ export const CabinWindow: React.FC<CabinWindowProps> = ({
           }}
         />
         <img
-          src="/cloud.png"
+          src={asset('/cloud.png')}
           alt=""
           aria-hidden="true"
           draggable="false"
@@ -286,7 +287,7 @@ export const CabinWindow: React.FC<CabinWindowProps> = ({
           }}
         />
         <img
-          src="/cloud.png"
+          src={asset('/cloud.png')}
           alt=""
           aria-hidden="true"
           draggable="false"
@@ -315,7 +316,7 @@ export const CabinWindow: React.FC<CabinWindowProps> = ({
       {/* 2. RECESSED INNER RIM (WINDOW BACK)                                       */}
       {/* ========================================================================= */}
       <img
-        src="/window-back.webp"
+        src={asset('/window-back.webp')}
         alt=""
         aria-hidden="true"
         draggable="false"
@@ -344,7 +345,7 @@ export const CabinWindow: React.FC<CabinWindowProps> = ({
         }}
       >
         <img
-          src="/window-shutter.webp"
+          src={asset('/window-shutter.webp')}
           alt=""
           aria-hidden="true"
           draggable="false"
@@ -368,8 +369,8 @@ export const CabinWindow: React.FC<CabinWindowProps> = ({
             ...Um,
             pointerEvents: 'none',
             boxShadow: 'inset 0 0 11px rgba(28, 25, 22, 0.42), inset 0 0 3px rgba(28, 25, 22, 0.30)',
-            maskImage: 'url(/window-shutter.webp)',
-            WebkitMaskImage: 'url(/window-shutter.webp)',
+            maskImage: `url(${asset('/window-shutter.webp')})`,
+            WebkitMaskImage: `url(${asset('/window-shutter.webp')})`,
             maskSize: '200px 300px',
             WebkitMaskSize: '200px 300px',
             maskRepeat: 'no-repeat',
@@ -385,7 +386,7 @@ export const CabinWindow: React.FC<CabinWindowProps> = ({
       {/* 4. WINDOW FRONT MOLDED BEZEL                                              */}
       {/* ========================================================================= */}
       <img
-        src="/window-front.webp"
+        src={asset('/window-front.webp')}
         alt=""
         aria-hidden="true"
         draggable="false"
@@ -407,8 +408,8 @@ export const CabinWindow: React.FC<CabinWindowProps> = ({
         style={{
           position: 'absolute',
           inset: 0,
-          maskImage: 'url(/window-front.webp)',
-          WebkitMaskImage: 'url(/window-front.webp)',
+          maskImage: `url(${asset('/window-front.webp')})`,
+          WebkitMaskImage: `url(${asset('/window-front.webp')})`,
           maskSize: 'cover',
           WebkitMaskSize: 'cover',
           maskRepeat: 'no-repeat',

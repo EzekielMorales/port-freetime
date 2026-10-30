@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { PassengerData } from '../types';
 import { CabinWindow } from './CabinWindow';
 import { sound } from '../utils/audio';
+import { asset } from '../utils/assets';
 
 interface NextPageProps {
   passenger: PassengerData;
@@ -354,7 +355,7 @@ export const NextPage: React.FC<NextPageProps> = ({ passenger, onBack }) => {
                         title={logo.name || item.company}
                         style={logo.bg ? { background: logo.bg } : undefined}
                       >
-                        <img src={logo.src} alt={logo.name || item.company} />
+                        <img src={asset(logo.src)} alt={logo.name || item.company} />
                       </a>
                     </span>
                   ))}
@@ -447,7 +448,7 @@ export const NextPage: React.FC<NextPageProps> = ({ passenger, onBack }) => {
                                     className="cs-shot"
                                     title={toolName}
                                   >
-                                    <img src={shot} alt={toolName} />
+                                    <img src={asset(shot)} alt={toolName} />
                                   </span>
                                 );
                               })}
@@ -509,7 +510,7 @@ export const NextPage: React.FC<NextPageProps> = ({ passenger, onBack }) => {
                       onMouseLeave={() => setHoveredMemory(null)}
                     >
                       <img
-                        src={mem.src}
+                        src={asset(mem.src)}
                         alt={mem.label}
                         style={{
                           objectFit: mem.fit,
