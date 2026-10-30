@@ -5,7 +5,7 @@ import { ScannerMachine, ScannerStatus } from './components/ScannerMachine';
 import { NextPage } from './components/NextPage';
 import { sound } from './utils/audio';
 
-type CardState = 'floating' | 'in_slot' | 'on_desk';
+
 
 export function App() {
   const [currentPage, setCurrentPage] = useState<'gate' | 'dashboard'>('gate');
@@ -16,18 +16,22 @@ export function App() {
   const [progress, setProgress] = useState(0);
 
   // Card physics state (Always right-side-up, crisp and clean!)
-  const [cardPos, setCardPos] = useState({ x: 0, y: 0 });
+  // Slot resting position (exact match to Image 2 - card seated comfortably inside scanner slot)
+  const RESTING_Y = 58;
+  const AIR_HOME = { x: 0, y: 0 };
+
+  const [cardPos, setCardPos] = useState(AIR_HOME);
   const [cardRot, setCardRot] = useState({ x: 0, y: 0, z: 0 });
   const [isDragging, setIsDragging] = useState(false);
-  const [cardState, setCardState] = useState<CardState>('floating');
+  const [cardState, setCardState] = useState<'floating' | 'in_slot'>('floating');
 
   // Physics refs
-  const posRef = useRef({ x: 0, y: 0 });
+  const posRef = useRef(AIR_HOME);
   const velRef = useRef({ x: 0, y: 0 });
   const rotRef = useRef({ x: 0, y: 0, z: 0 });
   const lastPointerRef = useRef({ x: 0, y: 0, time: 0 });
   const startPointerRef = useRef({ x: 0, y: 0 });
-  const startPosRef = useRef({ x: 0, y: 0 });
+  const startPosRef = useRef(AIR_HOME);
   const grabOffsetRef = useRef({ x: 0, y: 0 });
   const animFrameRef = useRef<number | null>(null);
   const lastChirpTimeRef = useRef(0);
@@ -38,8 +42,6 @@ export function App() {
   const minSwipeXRef = useRef(0);
 
   // Slot boundaries (relative to card resting origin)
-  const SLOT_Y_MIN = 45;          // Card bottom reaches slot
-  const SLOT_Y_MAX = 78;          // Card inside slot channel
   const SLOT_X_BOUNDS = 220;      // Slot width range
   const SWIPE_SUCCESS_X = 90;     // Swiped across to the right side (Matches Image 2)
 
@@ -47,25 +49,7 @@ export function App() {
     sound.enabled = true;
   }, []);
 
-  // Trigger success sequence
-  const handleSuccess = useCallback(() => {
-    setStatus('success');
-    setProgress(1);
-    sound.playSuccess();
-
-    // Settle card at the right side of the slot (Matches Image 2)
-    posRef.current = { x: SWIPE_SUCCESS_X + 15, y: 65 };
-    rotRef.current = { x: 0, y: 0, z: 0 };
-    setCardPos({ ...posRef.current });
-    setCardRot({ ...rotRef.current });
-
-    // Transition to flight dashboard after brief celebration delay
-    setTimeout(() => {
-      setCurrentPage('dashboard');
-    }, 850);
-  }, []);
-
-  // Ambient idle levitation loop (only when floating above machine)
+  // Ambient idle levitation loop (only when floating in mid-air above machine)
   useEffect(() => {
     let idleAnimId: number;
     const runIdleAnim = () => {
@@ -87,18 +71,42 @@ export function App() {
     return () => cancelAnimationFrame(idleAnimId);
   }, [status, cardState]);
 
-  // Spring animation to hover position above machine
-  const springToHome = (initialVx: number, initialVy: number) => {
+  // Trigger success sequence
+  const handleSuccess = useCallback(() => {
+    setStatus('success');
+    setProgress(1);
+    sound.playSuccess();
+
+    // Settle card at the right side of the slot
+    posRef.current = { x: SWIPE_SUCCESS_X + 15, y: RESTING_Y };
+    rotRef.current = { x: 0, y: 0, z: 0 };
+    setCardPos({ ...posRef.current });
+    setCardRot({ ...rotRef.current });
+
+    // Transition to flight dashboard after brief celebration delay
+    setTimeout(() => {
+      setCurrentPage('dashboard');
+    }, 850);
+  }, []);
+
+  // Spring animation to target position (either air home or seated in slot)
+  const springTo = (
+    targetX: number,
+    targetY: number,
+    nextState: 'floating' | 'in_slot',
+    initialVx = 0,
+    initialVy = 0
+  ) => {
     if (animFrameRef.current) cancelAnimationFrame(animFrameRef.current);
 
     let currentX = posRef.current.x;
     let currentY = posRef.current.y;
-    let vx = initialVx * 0.4;
-    let vy = initialVy * 0.4;
+    let vx = initialVx * 0.35;
+    let vy = initialVy * 0.35;
     let currentRotZ = rotRef.current.z;
     let currentRotX = rotRef.current.x;
 
-    const springK = 0.14;
+    const springK = 0.16;
     const damping = 0.76;
     let lastTime = performance.now();
 
@@ -108,8 +116,8 @@ export function App() {
       const dt = Math.min(2.5, (now - lastTime) / 16.66);
       lastTime = now;
 
-      const ax = -springK * currentX;
-      const ay = -springK * currentY;
+      const ax = -springK * (currentX - targetX);
+      const ay = -springK * (currentY - targetY);
 
       vx = (vx + ax * dt) * Math.pow(damping, dt);
       vy = (vy + ay * dt) * Math.pow(damping, dt);
@@ -126,69 +134,22 @@ export function App() {
       setCardRot({ x: currentRotX, y: 0, z: currentRotZ });
 
       if (
-        Math.abs(currentX) < 0.5 &&
-        Math.abs(currentY) < 0.5 &&
+        Math.abs(currentX - targetX) < 0.5 &&
+        Math.abs(currentY - targetY) < 0.5 &&
         Math.abs(vx) < 0.2 &&
         Math.abs(vy) < 0.2
       ) {
-        posRef.current = { x: 0, y: 0 };
+        posRef.current = { x: targetX, y: targetY };
         rotRef.current = { x: 0, y: 0, z: 0 };
-        setCardPos({ x: 0, y: 0 });
+        setCardPos({ x: targetX, y: targetY });
         setCardRot({ x: 0, y: 0, z: 0 });
-        setCardState('floating');
+        setCardState(nextState);
         setStatus('idle');
         setProgress(0);
         return;
       }
 
       animFrameRef.current = requestAnimationFrame(step);
-    };
-
-    animFrameRef.current = requestAnimationFrame(step);
-  };
-
-  // Drop and rest on desk surface below machine (Clean, right-side-up, no weird mirroring!)
-  const dropToDesk = (targetX: number) => {
-    if (animFrameRef.current) cancelAnimationFrame(animFrameRef.current);
-    sound.playDrop();
-
-    const targetDeskY = 215; // Desk surface position
-    const clampedDeskX = Math.max(-150, Math.min(150, targetX));
-    const targetRotX = 35;   // Perspective tilt on table
-    const targetRotZ = -3;   // Natural slight angle
-
-    let currentX = posRef.current.x;
-    let currentY = posRef.current.y;
-    let currentRotX = rotRef.current.x;
-    let currentRotZ = rotRef.current.z;
-
-    let startTime: number | null = null;
-    const duration = 350;
-
-    const step = (now: number) => {
-      if (isDraggingRef.current) return;
-      if (!startTime) startTime = now;
-      const t = Math.min(1, (now - startTime) / duration);
-      // easeOutCubic
-      const ease = 1 - Math.pow(1 - t, 3);
-
-      const x = currentX + (clampedDeskX - currentX) * ease;
-      const y = currentY + (targetDeskY - currentY) * ease;
-      const rx = currentRotX + (targetRotX - currentRotX) * ease;
-      const rz = currentRotZ + (targetRotZ - currentRotZ) * ease;
-
-      posRef.current = { x, y };
-      rotRef.current = { x: rx, y: 0, z: rz };
-      setCardPos({ x, y });
-      setCardRot({ x: rx, y: 0, z: rz });
-
-      if (t < 1) {
-        animFrameRef.current = requestAnimationFrame(step);
-      } else {
-        setCardState('on_desk');
-        setStatus('idle');
-        setProgress(0);
-      }
     };
 
     animFrameRef.current = requestAnimationFrame(step);
@@ -216,14 +177,14 @@ export function App() {
     lastPointerRef.current = { x: e.clientX, y: e.clientY, time: performance.now() };
     velRef.current = { x: 0, y: 0 };
 
-    enteredSlotFromLeftRef.current = false;
+    enteredSlotFromLeftRef.current = posRef.current.x < -30;
     minSwipeXRef.current = posRef.current.x;
 
     (e.currentTarget as HTMLElement).setPointerCapture?.(e.pointerId);
     sound.playSlide(0.4);
   };
 
-  // Pointer Move (Free 2D/3D movement + Horizontal Slot Swiping)
+  // Pointer Move (Free 3D dragging in air OR swipe along slot track)
   const handlePointerMove = (e: React.PointerEvent<HTMLDivElement>) => {
     if (!isDraggingRef.current || status === 'success') return;
 
@@ -238,37 +199,31 @@ export function App() {
     const rawX = startPosRef.current.x + (e.clientX - startPointerRef.current.x);
     const rawY = startPosRef.current.y + (e.clientY - startPointerRef.current.y);
 
-    // Natural 3D velocity tilt
-    const tiltZ = Math.max(-18, Math.min(18, vx * 0.15 + (grabOffsetRef.current.x / 180) * 3));
-    const tiltX = Math.max(-14, Math.min(14, -vy * 0.12));
+    const SLOT_THRESHOLD_Y = 32;
+    const isEnteringSlot = rawY >= SLOT_THRESHOLD_Y && Math.abs(rawX) <= SLOT_X_BOUNDS;
 
-    // Check if card is in the horizontal slot channel
-    const isInSlotHeight = rawY >= SLOT_Y_MIN && rawY <= SLOT_Y_MAX + 15;
-    const isInSlotWidth = Math.abs(rawX) <= SLOT_X_BOUNDS;
-
-    if (isInSlotHeight && isInSlotWidth) {
+    if (isEnteringSlot) {
       // =========================================================================
-      // CARD IS INSIDE THE SCANNER SLOT (SWIPE FROM LEFT TO RIGHT)
+      // INSIDE SCANNER SLOT:
+      // Hard depth floor so it NEVER pokes out the bottom ("ไม่ทะลุ")
       // =========================================================================
-      setCardState('in_slot');
-      
-      // Lock vertical depth to the slot track (Cannot poke through the bottom!)
-      const slotY = Math.max(SLOT_Y_MIN, Math.min(SLOT_Y_MAX, rawY));
-      const slotRotZ = tiltZ * 0.15;
+      const clampedY = Math.min(RESTING_Y, rawY);
+      const clampedX = Math.max(-SLOT_X_BOUNDS, Math.min(SLOT_X_BOUNDS, rawX));
+      const tiltZ = Math.max(-8, Math.min(8, vx * 0.1));
 
-      posRef.current = { x: rawX, y: slotY };
-      rotRef.current = { x: 0, y: 0, z: slotRotZ };
-      setCardPos({ x: rawX, y: slotY });
-      setCardRot({ x: 0, y: 0, z: slotRotZ });
+      posRef.current = { x: clampedX, y: clampedY };
+      rotRef.current = { x: 0, y: 0, z: tiltZ };
+      setCardPos({ x: clampedX, y: clampedY });
+      setCardRot({ x: 0, y: 0, z: tiltZ });
 
       // Track left-to-right swipe motion
-      if (rawX < -30) {
+      if (clampedX < -30) {
         enteredSlotFromLeftRef.current = true;
       }
-      minSwipeXRef.current = Math.min(minSwipeXRef.current, rawX);
+      minSwipeXRef.current = Math.min(minSwipeXRef.current, clampedX);
 
       // Swipe progress
-      const swipeProg = Math.max(0, Math.min(1, (rawX + 110) / 220));
+      const swipeProg = Math.max(0, Math.min(1, (clampedX + 110) / 220));
       setProgress(swipeProg);
 
       if (status !== 'reading') {
@@ -283,7 +238,7 @@ export function App() {
       }
 
       // SUCCESS TRIGGER: Reached right side of machine
-      if (rawX >= SWIPE_SUCCESS_X && (enteredSlotFromLeftRef.current || minSwipeXRef.current < 20)) {
+      if (clampedX >= SWIPE_SUCCESS_X && (enteredSlotFromLeftRef.current || minSwipeXRef.current < 20)) {
         isDraggingRef.current = false;
         setIsDragging(false);
         try {
@@ -292,17 +247,20 @@ export function App() {
           // Ignore
         }
         handleSuccess();
-        return;
       }
     } else {
       // =========================================================================
-      // CARD IS OUTSIDE THE SLOT (FREE 2D/3D MOVING ANYWHERE)
+      // IN THE AIR (Above the slot): Free 3D floating movement
       // =========================================================================
-      setCardState('floating');
+      const tiltZ = Math.max(-16, Math.min(16, vx * 0.15 + (grabOffsetRef.current.x / 180) * 3));
+      const tiltX = Math.max(-14, Math.min(14, -vy * 0.12));
 
-      posRef.current = { x: rawX, y: rawY };
+      // Hard depth ceiling: Cannot go deeper than RESTING_Y even outside horizontal slot
+      const clampedY = Math.min(RESTING_Y, rawY);
+
+      posRef.current = { x: rawX, y: clampedY };
       rotRef.current = { x: tiltX, y: 0, z: tiltZ };
-      setCardPos({ x: rawX, y: rawY });
+      setCardPos({ x: rawX, y: clampedY });
       setCardRot({ x: tiltX, y: 0, z: tiltZ });
 
       if (status !== 'idle') {
@@ -327,14 +285,18 @@ export function App() {
     if (status !== 'success') {
       setStatus('idle');
       setProgress(0);
+      sound.playSlide(0.3);
 
-      // If dropped below the machine (y > 130), rest on desk surface (Clean, right-side up!)
-      if (posRef.current.y > 130) {
-        dropToDesk(posRef.current.x);
+      // Did user release inside the slot?
+      if (posRef.current.y >= 32 && Math.abs(posRef.current.x) <= SLOT_X_BOUNDS) {
+        // PLACED IN SLOT! ("ตอนลากไปวางอ่ะ ผมอยากให้มันวางได้ ไม่ทะลุ")
+        // Dock comfortably into the slot floor:
+        const targetX = Math.abs(posRef.current.x) < 40 ? 0 : Math.max(-110, Math.min(110, posRef.current.x));
+        springTo(targetX, RESTING_Y, 'in_slot', velRef.current.x, velRef.current.y);
       } else {
-        // Otherwise spring back to hovering above machine
-        sound.playSlide(0.3);
-        springToHome(velRef.current.x, velRef.current.y);
+        // RELEASED IN THE AIR:
+        // Springs back up to floating position and resumes floating!
+        springTo(0, 0, 'floating', velRef.current.x, velRef.current.y);
       }
     }
   };
@@ -355,9 +317,9 @@ export function App() {
     setStatus('idle');
     setProgress(0);
     setCardState('floating');
-    posRef.current = { x: 0, y: 0 };
+    posRef.current = { ...AIR_HOME };
     rotRef.current = { x: 0, y: 0, z: 0 };
-    setCardPos({ x: 0, y: 0 });
+    setCardPos({ ...AIR_HOME });
     setCardRot({ x: 0, y: 0, z: 0 });
     setIsDragging(false);
     isDraggingRef.current = false;
