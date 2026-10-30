@@ -1081,3 +1081,26 @@
 ::-webkit-scrollbar-thumb:hover {
   background: rgba(150, 150, 150, 0.5);
 }
+
+/* ========================================================================= */
+/* TEXT WAVE ANIMATION ("Swipe boarding pass to enter")                      */
+/* ========================================================================= */
+@keyframes textWaveRipple {
+  0%, 36%, 100% {
+    transform: translateY(0);
+    opacity: 0.72;
+  }
+  18% {
+    transform: translateY(-4px);
+    opacity: 1;
+    color: #111827;
+    text-shadow: 0 2px 8px rgba(37, 99, 235, 0.22);
+  }
+}
+
+.wave-char {
+  display: inline-block;
+  animation: textWaveRipple 2.6s cubic-bezier(0.45, 0.05, 0.55, 0.95) infinite;
+  will-change: transform, opacity;
+}
+

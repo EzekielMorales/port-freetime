@@ -408,10 +408,29 @@ export function App() {
             <ScannerMachine status={status} progress={progress} />
           </div>
 
-          {/* ================= 3. INSTRUCTION TEXT ================= */}
+          {/* ================= 3. INSTRUCTION TEXT (Wave Animation) ================= */}
           <div className="mt-8 text-center select-none">
-            <p className="text-gray-600 text-lg md:text-xl font-normal tracking-wide">
-              Swipe <span className="font-semibold text-gray-900">boarding</span> pass to enter
+            <p className="text-gray-600 text-lg md:text-xl font-normal tracking-wide inline-flex items-center justify-center flex-wrap">
+              {(() => {
+                let charCount = 0;
+                const words = ["Swipe", "boarding", "pass", "to", "enter"];
+                return words.map((word, wIdx) => (
+                  <span key={wIdx} className="inline-flex mr-[0.32em] last:mr-0">
+                    {word.split('').map((char, cIdx) => {
+                      const delay = (charCount++) * 0.055;
+                      return (
+                        <span
+                          key={cIdx}
+                          style={{ animationDelay: `${delay.toFixed(3)}s` }}
+                          className="wave-char font-normal"
+                        >
+                          {char}
+                        </span>
+                      );
+                    })}
+                  </span>
+                ));
+              })()}
             </p>
           </div>
 
