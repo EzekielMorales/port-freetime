@@ -128,7 +128,7 @@ const TIMELINE_DATA: TimelineItem[] = [
     desc: 'Internal work request management system developed to streamline task assignments and tracking. Utilized Laravel Framework (PHP) to build a robust web application architecture, collaborating with team Cluster 3 to ensure system reliability.',
     logos: [
       { src: '/folio/logo-clicknext.png', name: 'ClickNext Bangkok', url: '#', bg: '#ffffff' },
-      { src: '/folio/logo-wrs.png', name: 'Work Request System (WRS)', url: '#', bg: '#0b0e14' },
+      { src: '/folio/logo-wrs.png', name: 'Work Request System (WRS)', url: '#', bg: '#ffffff' },
     ],
     cases: [
       {
