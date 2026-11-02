@@ -44,8 +44,8 @@ const TIMELINE_DATA: TimelineItem[] = [
     desc: 'Designed comprehensive test cases and scenarios across the application. Implemented automated Unit tests (Jest), API testing (Bruno), and End-to-End (E2E) test suites with Playwright to ensure robust software quality.',
     current: true,
     logos: [
-      { src: '/folio/logo-mymarket-box.png', name: 'MyMarket Order', url: '#' },
-      { src: '/folio/logo-mymarket-basket.png', name: 'MyMarket Cart', url: '#' },
+      { src: '/folio/logo-mymarket-box.png', name: 'Company', url: '#' },
+      { src: '/folio/logo-mymarket-basket.png', name: 'MyMarket', url: '#' },
     ],
     cases: [
       {
@@ -55,6 +55,29 @@ const TIMELINE_DATA: TimelineItem[] = [
         shots: [
           '/folio/shot-jest.svg',
           '/folio/shot-playwright.svg',
+          '/folio/shot-bruno.png',
+        ],
+      },
+    ],
+  },
+  {
+    year: '2026',
+    route: 'CBI',
+    company: 'MyShelf',
+    href: '#',
+    role: 'Software Development Engineer in Test (SDET) - Internship',
+    desc: 'Internal book borrowing and returning management system. Designed comprehensive test cases and scenarios across the application, implementing automated Unit tests with Jest and API testing with Bruno to ensure system reliability and data accuracy.',
+    logos: [
+      { src: '/folio/logo-mymarket-box.png', name: 'Company', url: '#' },
+      { src: '/folio/logo-myshelf.png', name: 'MyShelf', url: '#' },
+    ],
+    cases: [
+      {
+        title: 'Test Automation Suite',
+        desc: 'Unit and API testing with Jest & Bruno',
+        href: '#',
+        shots: [
+          '/folio/shot-jest.svg',
           '/folio/shot-bruno.png',
         ],
       },
@@ -74,8 +97,8 @@ const TIMELINE_DATA: TimelineItem[] = [
     role: 'Full-Stack Developer & QA Engineer | Collaborated with NECTEC',
     desc: 'Tourism Community Management System developed in collaboration with NECTEC. Built full-stack features using React, TypeScript & Express.js, and implemented automated End-to-End (E2E) testing with Playwright to ensure software reliability.',
     logos: [
-      { src: '/folio/logo-cultura.png', name: 'Cultura', url: '#', bg: '#0b0f14' },
       { src: '/folio/logo-nectec.png', name: 'NECTEC', url: '#', bg: '#ffffff' },
+      { src: '/folio/logo-cultura.png', name: 'Cultura', url: '#', bg: '#0b0f14' },
     ],
     cases: [
       {
@@ -104,8 +127,8 @@ const TIMELINE_DATA: TimelineItem[] = [
     role: 'Web Application Developer | Collaborated with ClickNext Bangkok',
     desc: 'Internal work request management system developed to streamline task assignments and tracking. Utilized Laravel Framework (PHP) to build a robust web application architecture, collaborating with team Cluster 3 to ensure system reliability.',
     logos: [
-      { src: '/folio/logo-wrs.png', name: 'Work Request System (WRS)', url: '#', bg: '#0b0e14' },
       { src: '/folio/logo-clicknext.png', name: 'ClickNext Bangkok', url: '#', bg: '#ffffff' },
+      { src: '/folio/logo-wrs.png', name: 'Work Request System (WRS)', url: '#', bg: '#0b0e14' },
     ],
     cases: [
       {
@@ -439,7 +462,7 @@ export const NextPage: React.FC<NextPageProps> = ({ passenger, onBack }) => {
                             <span className="tl-dot tl-dot-case" aria-hidden="true" />
 
                             {/* 3D Stacked / Separated Case Shots */}
-                            <span className="case-shots">
+                            <span className={`case-shots cs-count-${cStudy.shots.length}`}>
                               {cStudy.shots.map((shot, sIdx) => {
                                 const toolName = getShotName(shot);
                                 return (

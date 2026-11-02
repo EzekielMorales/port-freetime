@@ -559,6 +559,65 @@
   box-shadow: 0 6px 16px rgba(var(--shadow-rgb), 0.28), 0 2px 4px rgba(var(--shadow-rgb), 0.16);
 }
 
+/* 2-Card Stack variant (e.g. Jest & Bruno) */
+.cs-count-2 {
+  width: 58px;
+}
+
+.case.is-expanded .cs-count-2 {
+  width: 104px;
+}
+
+.cs-count-2 .cs-shot:nth-child(1) {
+  width: 30px;
+  height: 40px;
+  z-index: 1;
+  --x: -8px;
+  --y: 0px;
+  --r: -7deg;
+}
+
+.cs-count-2 .cs-shot:nth-child(2) {
+  width: 33px;
+  height: 44px;
+  z-index: 2;
+  --x: 6px;
+  --y: -1px;
+  --r: 5deg;
+}
+
+.case:not(.is-expanded):hover .cs-count-2 .cs-shot:nth-child(1) {
+  --x: -14px;
+  --y: -2px;
+  --r: -12deg;
+}
+
+.case:not(.is-expanded):hover .cs-count-2 .cs-shot:nth-child(2) {
+  --x: 12px;
+  --y: -3px;
+  --r: 9deg;
+  --s: 1.05;
+}
+
+.case.is-expanded .cs-count-2 .cs-shot {
+  width: 34px;
+  height: 45px;
+}
+
+.case.is-expanded .cs-count-2 .cs-shot:nth-child(1) {
+  --x: -24px;
+  --y: 0px;
+  --r: -4deg;
+  z-index: 2;
+}
+
+.case.is-expanded .cs-count-2 .cs-shot:nth-child(2) {
+  --x: 24px;
+  --y: 0px;
+  --r: 4deg;
+  z-index: 2;
+}
+
 .case.is-expanded .tl-dot-case {
   background: var(--flight-blue);
   border-color: #ffffff;
