@@ -652,15 +652,14 @@ export const NextPage: React.FC<NextPageProps> = ({ passenger, onBack }) => {
 
         {/* Cloud Descent Content & CTA */}
         <div className="cloud-descent-content">
-          <span className="pencil-handwriting-kicker">
-            Illustrated Field Notebook
+          <span className="cloud-descent-kicker">
+            Below the Clouds
           </span>
           <h2 className="cloud-descent-title">
-            Descending Below Cloud Deck
+            Descending into the Sketchbook
           </h2>
           <p className="cloud-descent-sub">
-            Touchdown into Mr. Panda&apos;s 3D hand-drawn papercraft world.
-            Scroll down or click below to unfold the illustrated field notebook.
+            Leaving the flight deck, entering the illustrated paper world.
           </p>
           <button
             type="button"
@@ -669,7 +668,7 @@ export const NextPage: React.FC<NextPageProps> = ({ passenger, onBack }) => {
             }}
             className="cloud-descent-action group cursor-pointer"
           >
-            <span>Explore 3D Notebook</span>
+            <span>Unfold the World</span>
             <svg className="w-4 h-4 transition-transform duration-200 group-hover:translate-y-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 14l-7 7m0 0l-7-7m7 7V3" />
             </svg>
