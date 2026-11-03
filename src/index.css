@@ -151,6 +151,7 @@
   display: flex;
   flex-direction: column;
   color: var(--ink);
+  overflow-x: hidden;
   transition: background-color 0.5s ease-out, color 0.5s ease-out;
 }
 
@@ -163,6 +164,13 @@
   display: flex;
   align-items: center;
   gap: 22px;
+  pointer-events: none;
+  transition: opacity 0.4s cubic-bezier(0.2, 0.8, 0.2, 1), transform 0.4s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+.folio-sticky.is-hidden {
+  opacity: 0;
+  transform: translateY(-20px);
   pointer-events: none;
 }
 
@@ -1001,6 +1009,27 @@
 }
 
 /* Layered foggy mist backdrop (blur + smooth gradient fade) */
+.folio-footer {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  z-index: 50;
+  pointer-events: none;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-end;
+  padding: 64px 0 24px;
+  transition: opacity 0.4s cubic-bezier(0.2, 0.8, 0.2, 1), transform 0.4s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+.folio-footer.is-in-paper {
+  opacity: 0;
+  pointer-events: none;
+  transform: translateY(28px);
+}
+
 .folio-footer::before {
   content: "";
   position: absolute;
@@ -1162,4 +1191,332 @@
   animation: textWaveRipple 2.6s cubic-bezier(0.45, 0.05, 0.55, 0.95) infinite;
   will-change: transform, opacity;
 }
+
+/* ========================================================================= */
+/* CLOUD DESCENT TRANSITION & FULL-SCREEN PAPERCRAFT 3D WORLD                */
+/* ========================================================================= */
+@keyframes cloudDriftSlow {
+  0% {
+    transform: translateX(0);
+  }
+  50% {
+    transform: translateX(-40px);
+  }
+  100% {
+    transform: translateX(0);
+  }
+}
+
+@keyframes cloudDriftFast {
+  0% {
+    transform: translateX(0);
+  }
+  50% {
+    transform: translateX(50px);
+  }
+  100% {
+    transform: translateX(0);
+  }
+}
+
+@keyframes cloudBobbing {
+  0%, 100% {
+    transform: translateY(0px) scale(1);
+  }
+  50% {
+    transform: translateY(-16px) scale(1.02);
+  }
+}
+
+.cloud-drift-1 {
+  animation: cloudDriftSlow 32s ease-in-out infinite, cloudBobbing 9s ease-in-out infinite;
+}
+
+.cloud-drift-2 {
+  animation: cloudDriftFast 26s ease-in-out infinite, cloudBobbing 7s ease-in-out infinite;
+}
+
+.cloud-drift-3 {
+  animation: cloudDriftSlow 40s ease-in-out infinite reverse, cloudBobbing 11s ease-in-out infinite;
+}
+
+.folio-cloud-descent {
+  position: relative;
+  width: 100%;
+  min-height: 480px;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 120px 24px 160px;
+  background: linear-gradient(
+    to bottom,
+    var(--folio-bg) 0%,
+    rgba(220, 234, 227, 0.35) 30%,
+    rgba(220, 234, 227, 0.7) 60%,
+    #dceae3 85%,
+    #dceae3 100%
+  );
+  transition: background 0.5s ease-out;
+}
+
+[data-theme="dark"] .folio-cloud-descent {
+  background: linear-gradient(
+    to bottom,
+    var(--folio-bg) 0%,
+    rgba(28, 44, 38, 0.4) 25%,
+    rgba(46, 74, 64, 0.65) 50%,
+    rgba(120, 165, 148, 0.85) 72%,
+    #dceae3 88%,
+    #dceae3 100%
+  );
+}
+
+.cloud-descent-content {
+  position: relative;
+  z-index: 10;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  max-width: 620px;
+  margin: 0 auto;
+}
+
+.pencil-handwriting-kicker {
+  font-family: 'Schoolbell', 'Patrick Hand', 'Gochi Hand', cursive;
+  font-size: clamp(20px, 2.5vw, 26px);
+  font-weight: 400;
+  letter-spacing: 0.04em;
+  color: #475569;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  transform: rotate(-1.5deg);
+  margin-bottom: 12px;
+  text-shadow: 0.5px 0.5px 1px rgba(0, 0, 0, 0.15);
+  user-select: none;
+  transition: transform 0.2s ease;
+}
+
+.pencil-handwriting-kicker:hover {
+  transform: rotate(0deg) scale(1.02);
+}
+
+[data-theme="dark"] .pencil-handwriting-kicker {
+  color: #94a3b8;
+  text-shadow: 0.5px 0.5px 2px rgba(0, 0, 0, 0.4);
+}
+
+/* Top-Right Paper Notebook Dock */
+.paper-dock-container {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 3px 6px;
+  border-radius: 9999px;
+  background: rgba(255, 255, 255, 0.85);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  box-shadow: 0 4px 18px rgba(0, 0, 0, 0.06);
+  pointer-events: auto;
+  transition: all 0.25s ease;
+}
+
+@media (prefers-color-scheme: dark) {
+  .paper-dock-container {
+    background: rgba(24, 30, 28, 0.88);
+    border-color: rgba(255, 255, 255, 0.15);
+    box-shadow: 0 4px 24px rgba(0, 0, 0, 0.35);
+  }
+}
+
+[data-theme="dark"] .paper-dock-container {
+  background: rgba(24, 30, 28, 0.88);
+  border-color: rgba(255, 255, 255, 0.15);
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.35);
+}
+
+.paper-dock-btn {
+  font-family: 'Schoolbell', 'Patrick Hand', 'Gochi Hand', cursive;
+  font-size: 15px;
+  font-weight: 500;
+  letter-spacing: 0.03em;
+  color: #1e293b;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 4px 10px;
+  border-radius: 9999px;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  transition: all 0.18s ease;
+  user-select: none;
+  line-height: 1;
+}
+
+.paper-dock-btn:hover {
+  color: #0f172a;
+  background: rgba(0, 0, 0, 0.06);
+  transform: translateY(-0.5px);
+}
+
+@media (prefers-color-scheme: dark) {
+  .paper-dock-btn {
+    color: #f8fafc;
+    text-shadow: 0 1px 3px rgba(0, 0, 0, 0.5);
+  }
+  .paper-dock-btn:hover {
+    color: #ffffff;
+    background: rgba(255, 255, 255, 0.14);
+  }
+}
+
+[data-theme="dark"] .paper-dock-btn {
+  color: #f8fafc;
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.5);
+}
+
+[data-theme="dark"] .paper-dock-btn:hover {
+  color: #ffffff;
+  background: rgba(255, 255, 255, 0.14);
+}
+
+.paper-dock-divider {
+  width: 1px;
+  height: 14px;
+  background: rgba(0, 0, 0, 0.12);
+  margin: 0 2px;
+}
+
+@media (prefers-color-scheme: dark) {
+  .paper-dock-divider {
+    background: rgba(255, 255, 255, 0.2);
+  }
+}
+
+[data-theme="dark"] .paper-dock-divider {
+  background: rgba(255, 255, 255, 0.2);
+}
+
+.paper-dock-icon-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 6px;
+  border-radius: 9999px;
+  color: #475569;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  transition: all 0.18s ease;
+}
+
+.paper-dock-icon-btn:hover {
+  color: #0f172a;
+  background: rgba(0, 0, 0, 0.06);
+}
+
+@media (prefers-color-scheme: dark) {
+  .paper-dock-icon-btn {
+    color: #cbd5e1;
+  }
+  .paper-dock-icon-btn:hover {
+    color: #ffffff;
+    background: rgba(255, 255, 255, 0.14);
+  }
+}
+
+[data-theme="dark"] .paper-dock-icon-btn {
+  color: #cbd5e1;
+}
+
+[data-theme="dark"] .paper-dock-icon-btn:hover {
+  color: #ffffff;
+  background: rgba(255, 255, 255, 0.14);
+}
+
+.cloud-descent-title {
+  font-family: var(--folio-sans);
+  font-weight: 600;
+  font-size: clamp(26px, 4vw, 36px);
+  line-height: 1.25;
+  color: #17160f;
+  letter-spacing: -0.02em;
+  margin: 0 0 10px;
+}
+
+[data-theme="dark"] .cloud-descent-title {
+  color: #f8fafc;
+  text-shadow: 0 2px 14px rgba(0, 0, 0, 0.45);
+}
+
+.cloud-descent-sub {
+  font-family: var(--folio-sans);
+  font-size: clamp(13px, 2vw, 15px);
+  line-height: 1.6;
+  color: #4b5563;
+  margin: 0 0 24px;
+  max-width: 480px;
+}
+
+[data-theme="dark"] .cloud-descent-sub {
+  color: #cbd5e1;
+  text-shadow: 0 1px 8px rgba(0, 0, 0, 0.4);
+}
+
+.cloud-descent-action {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 11px 24px;
+  border-radius: 9999px;
+  background: #17160f;
+  color: #ffffff;
+  font-family: var(--folio-mono);
+  font-size: 12px;
+  font-weight: 500;
+  letter-spacing: 1.2px;
+  text-transform: uppercase;
+  border: 1px solid transparent;
+  cursor: pointer;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.16);
+  transition: all 0.25s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+[data-theme="dark"] .cloud-descent-action {
+  background: #111827;
+  color: #f9fafb;
+  border-color: rgba(255, 255, 255, 0.18);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+}
+
+.cloud-descent-action:hover {
+  transform: translateY(-2px);
+  background: #2c6fff;
+  border-color: #2c6fff;
+  box-shadow: 0 12px 28px rgba(44, 111, 255, 0.32);
+}
+
+[data-theme="dark"] .cloud-descent-action:hover {
+  background: #2563eb;
+  border-color: #3b82f6;
+  box-shadow: 0 12px 28px rgba(37, 99, 235, 0.45);
+}
+
+/* Full-Screen Papercraft Experience Container (100vw, 100vh) */
+.folio-paper-world {
+  width: 100vw;
+  height: 100vh;
+  height: 100svh;
+  position: relative;
+  overflow: hidden;
+  background-color: #dceae3;
+  box-sizing: border-box;
+}
+
+
 

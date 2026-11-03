@@ -1,8 +1,11 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, Suspense } from 'react';
 import { PassengerData } from '../types';
 import { CabinWindow } from './CabinWindow';
+import { ErrorBoundary } from './ErrorBoundary';
 import { sound } from '../utils/audio';
 import { asset } from '../utils/assets';
+
+const PandaExperience = React.lazy(() => import('./PandaExperience/Experience'));
 
 interface NextPageProps {
   passenger: PassengerData;
@@ -182,6 +185,37 @@ export const NextPage: React.FC<NextPageProps> = ({ passenger, onBack }) => {
   // Hovered memory card index
   const [hoveredMemory, setHoveredMemory] = useState<number | null>(null);
 
+  // Track if user has scrolled down into the cloud descent or 3D Papercraft World
+  const [isInsidePaperWorld, setIsInsidePaperWorld] = useState(false);
+  const descentRef = useRef<HTMLElement | null>(null);
+  const paperWorldRef = useRef<HTMLElement | null>(null);
+
+  useEffect(() => {
+    const descentEl = descentRef.current;
+    const paperEl = paperWorldRef.current;
+
+    const visibleElements = new Set<Element>();
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            visibleElements.add(entry.target);
+          } else {
+            visibleElements.delete(entry.target);
+          }
+        });
+        setIsInsidePaperWorld(visibleElements.size > 0);
+      },
+      { threshold: 0.05 }
+    );
+
+    if (descentEl) observer.observe(descentEl);
+    if (paperEl) observer.observe(paperEl);
+
+    return () => observer.disconnect();
+  }, []);
+
   const toggleCase = (key: string) => {
     sound.playSlide(0.35);
     setExpandedCases((prev) => ({
@@ -297,7 +331,7 @@ export const NextPage: React.FC<NextPageProps> = ({ passenger, onBack }) => {
       {/* TOP LEFT METADATA BLOCK (DOT MATRIX RAIL & LOCATION COORDINATES)          */}
       {/* Exact match to mikes.cv & media_1793267119310_ac854b38.png               */}
       {/* ========================================================================= */}
-      <div className="folio-sticky" aria-hidden="true">
+      <div className={`folio-sticky ${isInsidePaperWorld ? 'is-hidden' : ''}`} aria-hidden="true">
         <div className="fs-rail" />
         <div className="fs-lines">
           <div className="fs-name">{passenger.name || 'S.Meedecha'}</div>
@@ -547,16 +581,135 @@ export const NextPage: React.FC<NextPageProps> = ({ passenger, onBack }) => {
               </div>
             </div>
           </div>
-
         </div>
 
       </main>
 
       {/* ========================================================================= */}
-      {/* BOTTOM FOOTER NAVIGATION                                                  */}
-      {/* Exact match to mikes.cv & media_1793267119310_ac854b38.png               */}
+      {/* 4. CLOUD DESCENT TRANSITION LAYER                                         */}
+      {/* "มีเมฆตรงปลายๆ อันล่าสุด แล้วลงไป หาไปกระดาษ ๆ แบบเต็มจออ่ะ"             */}
       {/* ========================================================================= */}
-      <footer className="folio-footer">
+      <section ref={descentRef} className="folio-cloud-descent" id="cloud-descent">
+        {/* Background Floating Cloud Layers (asset('/cloud.png')) */}
+        <div
+          className="absolute inset-0 pointer-events-none overflow-hidden"
+          style={{
+            maskImage: 'linear-gradient(to bottom, black 0%, black 60%, transparent 92%)',
+            WebkitMaskImage: 'linear-gradient(to bottom, black 0%, black 60%, transparent 92%)',
+          }}
+        >
+          {/* Cloud 1 - Top Left Drift */}
+          <img
+            src={asset('/cloud.png')}
+            alt=""
+            className="absolute -top-10 -left-20 w-[420px] md:w-[540px] opacity-60 cloud-drift-1 pointer-events-none select-none"
+            draggable="false"
+          />
+          {/* Cloud 2 - Top Right Drift */}
+          <img
+            src={asset('/cloud.png')}
+            alt=""
+            className="absolute top-4 -right-24 w-[480px] md:w-[600px] opacity-55 cloud-drift-2 pointer-events-none select-none"
+            draggable="false"
+          />
+          {/* Cloud 3 - Mid Left Drift */}
+          <img
+            src={asset('/cloud.png')}
+            alt=""
+            className="absolute top-44 -left-12 w-[380px] opacity-70 cloud-drift-3 pointer-events-none select-none"
+            draggable="false"
+          />
+          {/* Cloud 4 - Mid Right Floating */}
+          <img
+            src={asset('/cloud.png')}
+            alt=""
+            className="absolute top-48 right-12 w-[440px] opacity-65 cloud-drift-1 pointer-events-none select-none"
+            draggable="false"
+          />
+          {/* Cloud 5, 6, 7 - Bottom Cloud Bank Merging into Paper Notebook */}
+          <img
+            src={asset('/cloud.png')}
+            alt=""
+            className="absolute -bottom-16 left-[5%] w-[580px] opacity-85 cloud-drift-2 pointer-events-none select-none"
+            draggable="false"
+          />
+          <img
+            src={asset('/cloud.png')}
+            alt=""
+            className="absolute -bottom-24 right-[8%] w-[640px] opacity-90 cloud-drift-3 pointer-events-none select-none"
+            draggable="false"
+          />
+          <img
+            src={asset('/cloud.png')}
+            alt=""
+            className="absolute -bottom-28 left-[38%] w-[520px] opacity-95 cloud-drift-1 pointer-events-none select-none"
+            draggable="false"
+          />
+        </div>
+
+        {/* Seamless bottom fade overlay into 3D Papercraft Notebook (#dceae3) */}
+        <div className="absolute bottom-0 left-0 right-0 h-48 pointer-events-none bg-gradient-to-b from-transparent via-[#dceae3]/65 to-[#dceae3] z-[5]" />
+
+        {/* Cloud Descent Content & CTA */}
+        <div className="cloud-descent-content">
+          <span className="pencil-handwriting-kicker">
+            Illustrated Field Notebook
+          </span>
+          <h2 className="cloud-descent-title">
+            Descending Below Cloud Deck
+          </h2>
+          <p className="cloud-descent-sub">
+            Touchdown into Mr. Panda&apos;s 3D hand-drawn papercraft world.
+            Scroll down or click below to unfold the illustrated field notebook.
+          </p>
+          <button
+            type="button"
+            onClick={() => {
+              document.getElementById('papercraft-world')?.scrollIntoView({ behavior: 'smooth' });
+            }}
+            className="cloud-descent-action group cursor-pointer"
+          >
+            <span>Explore 3D Notebook</span>
+            <svg className="w-4 h-4 transition-transform duration-200 group-hover:translate-y-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 14l-7 7m0 0l-7-7m7 7V3" />
+            </svg>
+          </button>
+        </div>
+      </section>
+
+      {/* ========================================================================= */}
+      {/* 5. FULL-SCREEN 3D PAPERCRAFT NOTEBOOK WORLD (100vw, 100vh)                */}
+      {/* ========================================================================= */}
+      <section
+        ref={paperWorldRef}
+        className="folio-paper-world"
+        id="papercraft-world"
+      >
+        <ErrorBoundary>
+          <Suspense
+            fallback={
+              <div className="w-full h-full bg-[#dceae3] flex flex-col items-center justify-center">
+                <div className="w-10 h-10 rounded-full border-4 border-emerald-600 border-t-transparent animate-spin mb-3" />
+                <span className="font-mono text-xs text-emerald-900 font-bold tracking-wider">
+                  Unfolding 3D Papercraft Notebook...
+                </span>
+              </div>
+            }
+          >
+            <PandaExperience
+              onReturnToLog={() => {
+                document.getElementById('cloud-descent')?.scrollIntoView({ behavior: 'smooth' });
+              }}
+              onReturnToGate={onBack}
+            />
+          </Suspense>
+        </ErrorBoundary>
+      </section>
+
+      {/* ========================================================================= */}
+      {/* BOTTOM FOOTER NAVIGATION                                                  */}
+      {/* ========================================================================= */}
+      <footer className={`folio-footer ${isInsidePaperWorld ? 'is-in-paper' : ''}`}>
         <div className="folio-footer-inner">
           <nav className="ff-links">
             <button className="ff-link" onClick={onBack} type="button">
